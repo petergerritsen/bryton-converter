@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("Edit", "Route", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <label for="file">TCX-file:</label>
+    <input type="file" name="file" />
+    <input type="submit" value="OK" />
+}
