@@ -79,6 +79,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BrytonConvertorContext.cs" />
+    <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\CoursePoint.cs" />
     <Compile Include="Models\Route.cs" />
     <Compile Include="Models\TrackPoint.cs" />

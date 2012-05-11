@@ -12,5 +12,10 @@ namespace bryton_convertor.Models
         public DbSet<TrackPoint> TrackPoints { get; set; }
         public DbSet<CoursePoint> CoursePoints { get; set; }
         public DbSet<TrackPointType> TrackPointTypes { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BrytonConvertorContext, Configuration>());
+        }
     }
 }
