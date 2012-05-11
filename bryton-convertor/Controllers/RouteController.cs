@@ -24,15 +24,28 @@ namespace bryton_convertor.Controllers
         {
             if (file.ContentLength > 0)
             {
+                var model = new Models.ViewModels.EditRouteViewModel();
+
                 var context = new BrytonConvertorContext();
 
-                var route = new Route() { Name = "Henk", Description = "Henk" };
+                var route = new Route() { Name = "Henk", Description = "Henk", Created = DateTime.Now };
                 context.Routes.Add(route);
                 
                 // Parse XML
                 XDocument doc = XDocument.Load(file.InputStream);
                 XNamespace ns = XNamespace.Get("http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
-                
+
+                var coursePoints = new List<CoursePoint>();
+                foreach (XElement coursePoint in doc.Descendants(ns + "CoursePoint")){
+                    var point = new CoursePoint();
+                    point.Route = route;
+                    point.Latitude = decimal.Parse(coursePoint.Descendants(ns + "LatitudeDegrees").First().Value, CultureInfo.InvariantCulture);
+                    point.Longitude = decimal.Parse(coursePoint.Descendants(ns + "LongitudeDegrees").First().Value, CultureInfo.InvariantCulture);
+                    point.Name = coursePoint.Descendants(ns + "PointType").First().Value;
+                    coursePoints.Add(point);
+                    context.CoursePoints.Add(point);
+                }
+
                 foreach(XElement trackPoint in doc.Descendants(ns + "Trackpoint")){
                     var point = new TrackPoint();
                     point.Route = route;
@@ -40,17 +53,32 @@ namespace bryton_convertor.Controllers
                     point.Longitude = decimal.Parse(trackPoint.Descendants(ns + "LongitudeDegrees").First().Value, CultureInfo.InvariantCulture);
                     point.Elevation = decimal.Parse(trackPoint.Descendants(ns + "AltitudeMeters").First().Value, CultureInfo.InvariantCulture);
                     point.Distance = decimal.Parse(trackPoint.Descendants(ns + "DistanceMeters").First().Value, CultureInfo.InvariantCulture);
+
+                    point.CoursePoint = coursePoints.FirstOrDefault(x => x.Latitude == point.Latitude && x.Longitude == point.Longitude);
+
                     context.TrackPoints.Add(point);
                 }
 
-
                 context.SaveChanges();
+
+                model.RouteId = route.RouteId;
+
+                return View(model);
             }
             else
             {
                 return RedirectToAction("Index");
             }
-            return View();
+        }
+       
+        public ActionResult TrackPoints(int routeId) {
+            var context = new Models.BrytonConvertorContext();
+
+            var route = context.Routes.FirstOrDefault(x=> x.RouteId == routeId);
+            if (route == null)
+                return new HttpStatusCodeResult(404);
+
+            return Json(route.TrackPoints.Select(x => new { Lat = x.Latitude, Long = x.Longitude, Ele = x.Elevation, Dist = x.Distance }).ToArray(), JsonRequestBehavior.AllowGet);
         }
     }
 }
