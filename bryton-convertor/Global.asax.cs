@@ -37,17 +37,17 @@ namespace bryton_convertor
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            //System.Data.Entity.Database.SetInitializer();
+            System.Data.Entity.Database.SetInitializer(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<Models.BrytonConvertorContext>());
 
-            var ctx = new Models.BrytonConvertorContext();
-            var trackPointTypes = new List<TrackPointType> { 
-                new TrackPointType(){ Code="VALLEY", Name="Valley"},
-                new TrackPointType(){ Code="PEAK", Name="Peak" }
-            };
+            //var ctx = new Models.BrytonConvertorContext();
+            //var trackPointTypes = new List<TrackPointType> { 
+            //    new TrackPointType(){ Code="VALLEY", Name="Valley"},
+            //    new TrackPointType(){ Code="PEAK", Name="Peak" }
+            //};
 
-            trackPointTypes.ForEach(item => ctx.TrackPointTypes.Add(item));
+            //trackPointTypes.ForEach(item => ctx.TrackPointTypes.Add(item));
 
-            ctx.SaveChanges();
+            //ctx.SaveChanges();
         }
     }
 }
