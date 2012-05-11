@@ -36,7 +36,7 @@ namespace bryton_convertor
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            System.Data.Entity.Database.SetInitializer(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<bryton_convertor.Models.BrytonConvertorContext>());
+            System.Data.Entity.Database.SetInitializer(new Models.SeedData());
         }
     }
 }
