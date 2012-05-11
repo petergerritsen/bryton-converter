@@ -10,5 +10,7 @@ namespace bryton_convertor.Models
         public int TrackPointTypeId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+
+        public virtual ICollection<TrackPoint> TrackPoints { get; set; }
     }
 }

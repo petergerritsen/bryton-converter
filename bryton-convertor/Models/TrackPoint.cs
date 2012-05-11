@@ -9,6 +9,8 @@ namespace bryton_convertor.Models
     {
         public int TrackPointId { get; set; }
 
+        public virtual Route Route { get; set; }
+
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public decimal Elevation { get; set; }

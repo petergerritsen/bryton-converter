@@ -9,6 +9,8 @@ namespace bryton_convertor.Models
     {
         public int CoursePointId { get; set; }
 
+        public virtual Route Route {get;set;}
+
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public string Name { get; set; }
