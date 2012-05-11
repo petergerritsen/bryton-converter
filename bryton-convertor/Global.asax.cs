@@ -37,7 +37,7 @@ namespace bryton_convertor
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            System.Data.Entity.Database.SetInitializer(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<Models.BrytonConvertorContext>());
+            //System.Data.Entity.Database.SetInitializer();
 
             var ctx = new Models.BrytonConvertorContext();
             var trackPointTypes = new List<TrackPointType> { 
