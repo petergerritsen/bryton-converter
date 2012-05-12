@@ -3,38 +3,141 @@
 @{
     ViewBag.Title = "Edit";
 }
-
+<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?sensor=true">
+</script>
 <script type="text/javascript" language="javascript">
-    var chart1; // globally available
+    var map;
+    var elevationchart;
     $(document).ready(function () {
-        chart1 = new Highcharts.Chart({
+        var routeId = $("input[name='RouteId']").val();
+        var maxLong, minLong, maxLat, minLat, distance;
+
+        var points = [];
+        $.getJSON("/Route/TrackPoints?routeId=" + routeId, function (data) {
+            maxLong = data.MaxLong;
+            minLong = data.MinLong;
+            maxLat = data.MaxLat;
+            minLat = data.MinLat;
+            distance = data.Distance;
+            $.each(data.Points, function (key, val) {
+                points.push(val);
+            });
+
+            initialize_map(points, maxLat, minLat, maxLong, minLong);
+
+            initialize_elevationchart(points, distance);
+        });
+    });
+
+    function initialize_map(points, maxLat, minLat, maxLong, minLong) {
+        var myOptions = {
+            center: new google.maps.LatLng((maxLat + minLat) / 2, (maxLong + minLong) / 2),
+            zoom: 8,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+
+        map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(minLat, minLong), new google.maps.LatLng(maxLat, maxLong)));
+
+        var trackCoordinates = [];
+
+        $.each(points, function (key, val) {
+            trackCoordinates.push(new google.maps.LatLng(val.Lat, val.Long));
+        });
+
+        var trackPath = new google.maps.Polyline({
+            path: trackCoordinates,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        trackPath.setMap(map);
+    }
+
+    function initialize_elevationchart(points,distance) {
+        var data = [];
+
+        $.each(points, function (key, val) {
+            data.push([val.Dist, val.Ele]);
+        });
+
+        elevationchart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container',
-                type: 'bar'
+                renderTo: 'chartcontainer',
+                zoomType: 'x',
+                spacingRight: 20
             },
             title: {
-                text: 'Fruit Consumption'
+                text: 'Elevation'
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+				'Click and drag in the plot area to zoom in' :
+				'Drag your finger over the plot to zoom in'
             },
             xAxis: {
-                categories: ['Apples', 'Bananas', 'Oranges']
+                type: 'linear',
+                maxZoom: 100,
+                title: {
+                    text: null
+                }
             },
             yAxis: {
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Elevation'
+                },
+                showFirstLabel: false
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: [0, 0, 0, 300],
+                        stops: [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, 'rgba(2,0,0,0)']
+					]
+                    },
+                    lineWidth: 1,
+                    marker: {
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 5
+                            }
+                        }
+                    },
+                    shadow: false,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    }
                 }
             },
             series: [{
-                name: 'Jane',
-                data: [1, 0, 4]
-            }, {
-                name: 'John',
-                data: [5, 7, 3]
+                type: 'area',
+                name: 'Ele',
+                data: data
             }]
         });
-    });
+    }
 </script>
 
 <h2>Edit</h2>
 
-<div id="container" style="width: 100%; height: 400px"></div>
+@Html.HiddenFor(x => x.RouteId)
+
+<div id="map_canvas" style="width: 100%; height: 400px"></div>
+
+<div id="chartcontainer" style="width: 100%; height: 200px"></div>
 
