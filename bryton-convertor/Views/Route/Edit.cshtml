@@ -8,12 +8,16 @@
 </script>
 <script type="text/javascript" language="javascript">
     var map;
+    var selectedX;
+    var pointMarker = null;
     var elevationchart;
+    var points = [];
+    var pointDistances = [];
+    var markers = [];
     $(document).ready(function () {
         var routeId = $("input[name='RouteId']").val();
         var maxLong, minLong, maxLat, minLat, distance;
 
-        var points = [];
         $.getJSON("/Route/TrackPoints?routeId=" + routeId, function (data) {
             maxLong = data.MaxLong;
             minLong = data.MinLong;
@@ -22,21 +26,22 @@
             distance = data.Distance;
             $.each(data.Points, function (key, val) {
                 points.push(val);
+                pointDistances.push(val.Dist);
             });
 
-            initialize_map(points, maxLat, minLat, maxLong, minLong);
+            initialize_map(maxLat, minLat, maxLong, minLong);
 
-            initialize_elevationchart(points, distance);
+            initialize_elevationchart(distance);
         });
     });
 
-    function initialize_map(points, maxLat, minLat, maxLong, minLong) {
+    function initialize_map(maxLat, minLat, maxLong, minLong) {
         var myOptions = {
             center: new google.maps.LatLng((maxLat + minLat) / 2, (maxLong + minLong) / 2),
             zoom: 8,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
+        map = new google.maps.Map(document.getElementById("map_canvas"),
             myOptions);
 
         map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(minLat, minLong), new google.maps.LatLng(maxLat, maxLong)));
@@ -57,7 +62,51 @@
         trackPath.setMap(map);
     }
 
-    function initialize_elevationchart(points,distance) {
+    function setPointMarker(dist) { 
+        if (dist === null && pointMarker != null) {
+            pointMarker.setVisible(false);
+        }
+        else{
+            var pos = getPointPosition(dist);
+            if (pointMarker === null) {
+                pointMarker = new google.maps.Marker({
+                    position: pos,
+                    map: map
+                });
+            }
+            pointMarker.setPosition(pos);
+            pointMarker.setVisible(true);
+        }
+    }
+
+    function addMarker(dist) {
+        var pos = getPointPosition(dist);
+        
+        pointMarker = new google.maps.Marker({
+            position: pos,
+            map: map
+        });
+
+        markers.push(pointMarker);
+
+        elevationchart.xAxis[0].addPlotLine({
+            value: dist,
+            color: 'red',
+            width: 1,
+            id: 'plot-line' + dist
+        });
+        
+    }
+
+    function getPointPosition(dist) {
+        var x = $.inArray(dist, pointDistances);
+        var point = points[x];
+        if (point === undefined)
+            return;
+        return new google.maps.LatLng(point.Lat, point.Long);
+    }
+
+    function initialize_elevationchart(distance) {
         var data = [];
 
         $.each(points, function (key, val) {
@@ -98,6 +147,23 @@
                 enabled: false
             },
             plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                setPointMarker(this.x);
+                            },
+                            click: function () {
+                                addMarker(this.x);
+                            }
+                        }
+                    },
+                    events: {
+                        mouseOut: function () {
+                            setPointMarker(null);
+                        }
+                    }
+                },
                 area: {
                     fillColor: {
                         linearGradient: [0, 0, 0, 300],
