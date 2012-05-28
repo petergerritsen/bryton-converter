@@ -69,6 +69,7 @@ namespace Web.Controllers
                 context.SaveChanges();
 
                 model.RouteId = route.Id;
+                model.RouteName = route.Name;
 
                 return View(model);
             }

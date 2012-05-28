@@ -7,6 +7,7 @@ namespace Web.Models
 {
     public class EditRouteViewModel
     {
+        public string RouteName { get; set; }
         public int RouteId { get; set; }
     }
 }
