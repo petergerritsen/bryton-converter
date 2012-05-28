@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Core.Persistence;
+using System.Data.Entity.Migrations;
 
 namespace Web
 {
@@ -35,6 +37,10 @@ namespace Web
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            var configuration = new Configuration();
+            var migrator = new DbMigrator(configuration);
+            migrator.Update();
         }
     }
 }
