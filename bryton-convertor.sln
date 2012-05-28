@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bryton-convertor", "bryton-convertor\bryton-convertor.csproj", "{E08254F8-9E71-44D8-A97A-441EFECA5C05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "bryton-convertor\Web.csproj", "{E08254F8-9E71-44D8-A97A-441EFECA5C05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{DF791094-4DDD-4580-B7C2-7086CC4AB89F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{E08254F8-9E71-44D8-A97A-441EFECA5C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E08254F8-9E71-44D8-A97A-441EFECA5C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E08254F8-9E71-44D8-A97A-441EFECA5C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF791094-4DDD-4580-B7C2-7086CC4AB89F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF791094-4DDD-4580-B7C2-7086CC4AB89F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF791094-4DDD-4580-B7C2-7086CC4AB89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF791094-4DDD-4580-B7C2-7086CC4AB89F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

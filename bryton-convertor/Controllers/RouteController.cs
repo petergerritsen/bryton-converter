@@ -4,11 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
-using bryton_convertor.Models;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Globalization;
+using Core.Persistence;
+using Core.Model;
+using System.Xml;
 
-namespace bryton_convertor.Controllers
+namespace Web.Controllers
 {
     public class RouteController : Controller
     {
@@ -24,17 +27,19 @@ namespace bryton_convertor.Controllers
         {
             if (file.ContentLength > 0)
             {
-                var model = new Models.ViewModels.EditRouteViewModel();
+                var model = new Models.EditRouteViewModel();
 
-                var context = new BrytonConvertorContext();
-
-                var route = new Route() { Name = "Henk", Description = "Henk", Created = DateTime.Now };
-                context.Routes.Add(route);
-
+                var context = new Core.Persistence.Context();
+                               
                 // Parse XML
                 XDocument doc = XDocument.Load(file.InputStream);
                 XNamespace ns = XNamespace.Get("http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
-
+                                
+                var name = doc.Root.Elements(ns + "Courses").First().Descendants(ns +"Course").First().Descendants(ns + "Name").First().Value;
+                
+                var route = new Route() { Name = name, Description = "Bryton Convertor course", Created = DateTime.Now };
+                context.Routes.Add(route);
+                
                 var coursePoints = new List<CoursePoint>();
                 foreach (XElement coursePoint in doc.Descendants(ns + "CoursePoint"))
                 {
@@ -63,7 +68,7 @@ namespace bryton_convertor.Controllers
 
                 context.SaveChanges();
 
-                model.RouteId = route.RouteId;
+                model.RouteId = route.Id;
 
                 return View(model);
             }
@@ -75,9 +80,9 @@ namespace bryton_convertor.Controllers
 
         public ActionResult TrackPoints(int routeId)
         {
-            var context = new Models.BrytonConvertorContext();
+            var context = new Context();
 
-            var route = context.Routes.FirstOrDefault(x => x.RouteId == routeId);
+            var route = context.Routes.FirstOrDefault(x => x.Id == routeId);
             if (route == null)
                 return new HttpStatusCodeResult(404);
 
@@ -91,7 +96,7 @@ namespace bryton_convertor.Controllers
                 Distance = route.TrackPoints.Max(x => x.Distance),
                 Points = route.TrackPoints.Select(x => new
                 {
-                    Id = x.TrackPointId,
+                    Id = x.Id,
                     Lat = x.Latitude,
                     Long = x.Longitude,
                     Ele = x.Elevation,
