@@ -1,0 +1,1786 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.brytonsport.com/BDX/2/2" targetNamespace="http://www.brytonsport.com/BDX/2/2" elementFormDefault="qualified" version="2.2.0.5">
+<xs:annotation>
+<xs:documentation>BDX schema. Bryton data exchange XML (BDX) is a sport track log/path exchange data protocol. It bases on GPX 1.1 and extends some information for BrytonSport. The extended filename is  .bdx". It includes the geographic information of track, sport sensor log and exercise statistic information.
+All coordinates are relative to the WGS84 datum.  All measurements are in metric units.
+The major concept of data framwork is one route includes one track in one BDX file. Many track segments compose one track. The document is confidential.
+
+Docuement rules:
+1. There is a prefix [ ] for every comment of element. It represents what kind of data it can appear.
+[P] Pre-plane route
+[S] Sharing data
+[T] Track log
+[TW] Test workout
+[POI] Point of interest
+if there is no any data classification comment, it represent that the element/attribute is for all kind of data.
+
+Declared namespaces:
+-------------------------------------------------------------------------------------------
+| Prefix                       |  namespace
+-------------------------------------------------------------------------------------------
+| default namespace     	   |  http://www.brytonsport.com/BDX/2/2
+-------------------------------------------------------------------------------------------
+| xs                           |  http://www.w3.org/2001/XMLSchema
+-------------------------------------------------------------------------------------------
+</xs:documentation>
+</xs:annotation>
+<xs:element name="gpx" type="gpxType">
+<xs:annotation>
+<xs:documentation>
+gpx is the root element in the XML file.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:complexType name="gpxType">
+<xs:annotation>
+<xs:documentation>
+BDX documents contain a metadata header, followed by waypoints, routes, and tracks.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="metadata" type="metadataType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Metadata about the file.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="wpt" type="wptType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+A list of POIs
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="rte" type="rteType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+One route only includes the waypoints without all track points.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="trk" type="trkType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+A list of track points.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="extensions" type="gpxextendedType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+It includes sport sensor and sport workout log
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="version" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+You must include the version number in your GPX document.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="creator" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+You must include the name or URL of the software that created your GPX document.  This allows others to inform the creator of a GPX instance document that fails to validate.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="metadataType">
+<xs:annotation>
+<xs:documentation>
+Information about the GPX file, author, and copyright restrictions goes in the metadata section.  Providing rich, meaningful information about your GPX files allows others to search for and use your GPS data.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="name" type="nameType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+The name of the track/path.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="desc" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+A description of the contents of the BDX file.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="author" type="personType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+The person or organization who created the GPX file.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="time" type="xs:dateTime" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+The creation date of the file. It is an Universal Coordinated Time (UTC), not local time! E.g. 2010-02-27T01:24:16Z
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="bounds" type="boundsType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Minimum and maximum coordinates which describe the extent of the coordinates in the file.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="extensions" type="metaextendedType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Extended information for Bryton
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="wptType">
+<xs:annotation>
+<xs:documentation>
+wpt represents a waypoint, point of interest, or named feature on a map.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="ele" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Elevation (in meters) of the point.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="time" type="xs:dateTime" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Creation/modification timestamp for element. Date and time in are in Univeral Coordinated Time (UTC), not local time! Conforms to ISO 8601 specification for date/time representation. Fractional seconds are allowed for millisecond timing in tracklogs. E.g. 2010-02-27T01:24:16Z
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="magvar" type="degreesType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Magnetic variation (in degrees) at the point
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="name" type="nameType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+The name of the waypoint. BDX does not place restrictions on the length of this field or the characters contained in it.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="cmt" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+waypoint comment. or a turn instruction for a planned route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="desc" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+A text description of the element. Holds additional information about the element intended for the user.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="type" type="wpttpType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Type (classification) of the waypoint.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="extensions" type="wptextendedType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Extended waypoint information for Bryton.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="lat" type="latitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The latitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="lon" type="longitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The latitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="rteType">
+<xs:annotation>
+<xs:documentation>
+rte represents route - an ordered list of waypoints representing a series of turn points leading to a destination.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="name" type="nameType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+GPS name of route.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="cmt" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+comment for route.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="desc" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Text description of route for user.  .
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="src" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Source of data. Included to give user some idea of reliability and accuracy of data.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="number" type="xs:positiveInteger" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Total route point (rtept) number, it includes the start point and end point.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="type" type="rtetpType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Type (classification) of route.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="extensions" type="extensionsType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+You can add extend GPX by adding your own elements from another schema here.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="rtept" type="wptType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+A waypoint (not track point) list  of route.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trkType">
+<xs:annotation>
+<xs:documentation>
+trk represents a track - an ordered list of points describing a path.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="trkseg" type="trksegType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+A Track Segment holds a list of Track Points which are logically connected in order.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="extensionsType">
+<xs:annotation>
+<xs:documentation>
+You can add extend GPX by adding your own elements from another schema here.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+You can add extend GPX by adding your own elements from another schema here.
+</xs:documentation>
+</xs:annotation>
+</xs:any>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="trksegType">
+<xs:annotation>
+<xs:documentation>
+A Track Segment holds a list of Track Points which are logically connected in order.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="trkpt" type="wptType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+A Track Point holds the coordinates, elevation, timestamp, and metadata for a single point in a track.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="extensions" type="trksegextendedType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Extended track segment information for Bryton
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="linkType">
+<xs:annotation>
+<xs:documentation>
+A link to an external resource (Web page, digital photo, video clip, etc) with additional information.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="text" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Text of hyperlink.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="type" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Mime type of content (image/jpeg)
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="href" type="xs:anyURI" use="required">
+<xs:annotation>
+<xs:documentation>
+URL of hyperlink.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="emailType">
+<xs:annotation>
+<xs:documentation>
+An email address.  Broken into two parts (id and domain) to help prevent email harvesting.
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="id" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+id half of email address (billgates2004)
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="domain" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+domain half of email address (hotmail.com)
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="personType">
+<xs:annotation>
+<xs:documentation>
+A person or organization.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="name" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Name of person or organization.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="email" type="emailType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Email address.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="link" type="linkType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Link to Web site or other external information about person.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ptType">
+<xs:annotation>
+<xs:documentation>
+A geographic point with optional elevation and time.  Available for use by other schemas.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="ele" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+The elevation (in meters) of the point.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="time" type="xs:dateTime" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+The time that the point was recorded.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="lat" type="latitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The latitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="lon" type="longitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The latitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="ptsegType">
+<xs:annotation>
+<xs:documentation>
+An ordered sequence of points.  (for polygons or polylines, e.g.)
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="pt" type="ptType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+Ordered list of geographic points.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="boundsType">
+<xs:annotation>
+<xs:documentation>
+Two lat/lon pairs defining the extent of an element.
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="minlat" type="latitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The minimum latitude.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="minlon" type="longitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The minimum longitude.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="maxlat" type="latitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The maximum latitude.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="maxlon" type="longitudeType" use="required">
+<xs:annotation>
+<xs:documentation>
+The maximum longitude.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="metaextendedType">
+<xs:annotation>
+<xs:documentation>
+Extended metadata for Bryton
+</xs:documentation>
+</xs:annotation>
+<xs:all>
+<xs:element name="user" type="userinfoType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+User's profile
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="sys" type="sysType" minOccurs="1">
+<xs:annotation>
+<xs:documentation>
+Creating system information
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="sharetype" type="sharingType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[S] Sharing data type. This is only for Bryton. You can skip it.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="sctry" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Country code (ISO 3166-1 alpha-3 ) of start point for this route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="ectry" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Country code (ISO 3166-1 alpha-3 ) of end point for this route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="splace" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Place name string of start point for this route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="eplace" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Place name string of end point for this route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="acttype" type="acttypeType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[P][T][S][TW] Place name string of end point for this route
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="trvTime" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Travel time in minutes
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="trvDist" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Travel distance in meters
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="stime" type="xs:dateTime" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Start time of track log. It is an Universal Coordinated Time (UTC), not local time! E.g. 2010-02-27T01:24:16Z
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="etime" type="xs:dateTime" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] End time of track log. It is an Universal Coordinated Time (UTC), not local time! E.g. 2010-02-27T01:24:16Z
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="poollen" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Pool length in meters
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:all>
+</xs:complexType>
+<xs:complexType name="userinfoType">
+<xs:annotation>
+<xs:documentation>
+User's profile. It includes user's exercise intensity, gender, age, bike's profile and so on. This information should be include for a track log.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="name" type="nameType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+User's profile. It includes user's exercise intensity, gender, age, bike's profile and so on. This information should be include for a track log.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="gender" type="genderType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Gender
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="weight" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Weight in kg
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="height" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Height in cm
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="age" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Age
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="bike" type="bikeinfoType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Bike information for this log
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="mhr" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Maximum heart rate in BPM at logging time.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="lthr" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Lactate threshold heart rate in BPM at logging time.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="map" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Maximum aerobic power in watts at logging time.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="ftp" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Functional threshold power in watts at logging time.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="zonedef" type="zonedefType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+Training zone definitions
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="stridelen" type="stridelenType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+stride length for running
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="runperf" type="runperfType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Racing peformance for running
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="bikeinfoType" mixed="true">
+<xs:annotation>
+<xs:documentation>
+Bike information. The bike element includes bike ID, default is 1.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="name" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Bike name
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="weight" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Bike weight in kg.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="type" type="bikeType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Bike type
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="wheel" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+wheel perimeter in micrometers
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="zonedefType">
+<xs:annotation>
+<xs:documentation>
+It holds a list of training zone definition in order.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="zone" type="zonevalueType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+Zone range definition.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="type" type="zoneType" use="required">
+<xs:annotation>
+<xs:documentation>
+Zone type code
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="isUsed" type="xs:boolean" use="required">
+<xs:annotation>
+<xs:documentation>
+if user is using this zone definition for this training log, This flag should be "true"
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="zonevalueType">
+<xs:annotation>
+<xs:documentation>
+Training zone range definition. It includes zone order and the range of zone.
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="low" type="xs:integer" use="required">
+<xs:annotation>
+<xs:documentation>
+Low value of zone, the unit is depends on the type. Heart rate is BPM, Pace is 0.01 min/km. Power is watt. Others are %.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="high" type="xs:integer" use="required">
+<xs:annotation>
+<xs:documentation>
+High value of zone. Heart rate is BPM. Pace is 0.01 min/km. Power is watt. Others are %
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="id" type="xs:positiveInteger" use="required">
+<xs:annotation>
+<xs:documentation>
+Training zone ordering number
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="stridelenType">
+<xs:annotation>
+<xs:documentation>
+Stride length profile of running. One stride is equal to 2 steps.
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="longdist" type="xs:decimal" use="required">
+<xs:annotation>
+<xs:documentation>
+Mean long-distance stride length in cm.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="sprint" type="xs:decimal" use="required">
+<xs:annotation>
+<xs:documentation>
+Mean sprint running stride length in cm.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="runperfType">
+<xs:annotation>
+<xs:documentation>
+This is a user racing performance of running.
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="racedist" type="xs:integer" use="required">
+<xs:annotation>
+<xs:documentation>
+Racing distance in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="racetime" type="xs:integer" use="required">
+<xs:annotation>
+<xs:documentation>
+Racing time in seconds.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="nameType" mixed="true">
+<xs:annotation>
+<xs:documentation>
+name information. The name element includes a name string, you can also set its short name in extensions element.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="shtname" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Shortening name of name for Bryton's lower specification device.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="lang" type="xs:string">
+<xs:annotation>
+<xs:documentation>
+language code. ISO 639-2 alpha3
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="sysType" mixed="true">
+<xs:annotation>
+<xs:documentation>
+Creating system information. Ths sys element includes a system name string, e.g. Praha, Warsaw and so on.  You can also set extra information for other applications in apps element.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="apps" type="appsType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+A list of applications
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="version" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+System name, e.g Praha or Warsaw or Lugun
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="appsType">
+<xs:annotation>
+<xs:documentation>
+A list of application
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="app" type="appType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+A list of applications
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="appType">
+<xs:annotation>
+<xs:documentation>
+A application information
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="name" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+Application name
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="version" type="xs:string" use="required">
+<xs:annotation>
+<xs:documentation>
+Application version
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="acttypeType">
+<xs:annotation>
+<xs:documentation>
+Activation information
+</xs:documentation>
+</xs:annotation>
+<xs:simpleContent>
+<xs:extension base="activityType">
+<xs:attribute name="subtype" use="required" type="subactType"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wpttpType">
+<xs:annotation>
+<xs:documentation>
+Waypoint type information
+</xs:documentation>
+</xs:annotation>
+<xs:simpleContent>
+<xs:extension base="wptclsType">
+<xs:attribute name="isCal" type="xs:boolean">
+<xs:annotation>
+<xs:documentation>
+This attribute is a flag of elevation calibartion point.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wptextendedType">
+<xs:annotation>
+<xs:documentation>
+The extended information is for POI.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="tel" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[POI] Telephone number of POI
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="ctry" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[POI] Country code (ISO 3166-1 alpha-3 )
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="place" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[POI] Place name, it might include states/province and city/county name which separated by ",", or just has city/county name
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="road" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[POI] Street name
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="hnum" type="xs:string" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[POI] House number
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="speed" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] moving speed in km/hr
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="rtetpType">
+<xs:annotation>
+<xs:documentation>
+rout type information
+</xs:documentation>
+</xs:annotation>
+<xs:simpleContent>
+<xs:extension base="rtecodeType">
+<xs:attribute name="isStopWatch" type="xs:boolean"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="trksegextendedType">
+<xs:annotation>
+<xs:documentation>
+Extended track segment information for Bryton
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="acttype" type="acttypeType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Activity type, If there is no this element, it means the whole log is just for one kind of exercise.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="gpxextendedType">
+<xs:annotation>
+<xs:documentation>
+GPX extensions.  It includes sport sensor and sport workout log
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="ssrlog" type="ssrlogType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] Sensor log information
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="laps" type="lapsType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+[T] A list of exercising summary
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ssrlogType">
+<xs:annotation>
+<xs:documentation>
+Sensor log information.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="logseg" type="logsegType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+Sensor log segment.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="logsegType">
+<xs:annotation>
+<xs:documentation>
+Sensor log segment holds sensor records in order.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="logpt" type="logptType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+[T] sensor log point.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="logptType">
+<xs:annotation>
+<xs:documentation>
+Sensor log point
+</xs:documentation>
+</xs:annotation>
+<xs:all>
+<xs:element name="spd" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Wheel speed in m/sec
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="tmp" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Temperature in Celsius
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="brm" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Barometer in Pa
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="cad" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Cadence in RPM
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="pwr" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Instantaneous power in watt
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="hrm" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Heart rate in BPM
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:all>
+<xs:attribute name="time" type="xs:dateTime" use="required">
+<xs:annotation>
+<xs:documentation>
+The recording time. It is an Universal Coordinated Time (UTC), not local time! E.g. 2010-02-27T01:24:16Z
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="testresultType">
+<xs:annotation>
+<xs:documentation>
+Test workout result
+</xs:documentation>
+</xs:annotation>
+<xs:simpleContent>
+<xs:extension base="xs:integer">
+<xs:attribute name="mode" use="required" type="testmodeType">
+<xs:annotation>
+<xs:documentation>
+Test workout type
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="lapsType">
+<xs:annotation>
+<xs:documentation>
+A list of lap information and the total summary of one log
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="lap" type="lapType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>
+One lap summary information
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="summary" type="lapType" minOccurs="1">
+<xs:annotation>
+<xs:documentation>
+summary information for whole log.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="lapType">
+<xs:annotation>
+<xs:documentation>
+Exercising summary for one lap.
+</xs:documentation>
+</xs:annotation>
+<xs:sequence>
+<xs:element name="distance" type="xs:integer" minOccurs="1">
+<xs:annotation>
+<xs:documentation>
+Distance in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="calorie" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Burned calorie of lap in KCal.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="step" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Step count
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="altloss" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Altitude loss in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="altgain" type="xs:decimal" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Altitude gain in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="speed" type="exestatdecType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Speed information in km/hr
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="hrm" type="exestatintType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Heart rate information in BPM .
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="cad" type="exestatintType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Cadence information in RPM.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="pwr" type="exestatintType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Power information in watt.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="rtime" type="xs:integer" minOccurs="1">
+<xs:annotation>
+<xs:documentation>
+Moving time in seconds.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="gainaltlen" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Gain altitude length in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="lostaltlen" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+lost altitude length in meters.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="gainalttime" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+Gain altitude length in seconds.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="lostalttime" type="xs:integer" minOccurs="0">
+<xs:annotation>
+<xs:documentation>
+lost altitude length in seconds.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+<xs:attribute name="order" type="xs:positiveInteger">
+<xs:annotation>
+<xs:documentation>
+The lap order number
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="start" type="xs:dateTime">
+<xs:annotation>
+<xs:documentation>
+When the start time of lap.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="end" type="xs:dateTime">
+<xs:annotation>
+<xs:documentation>
+When the end time of lap.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="exestatintType">
+<xs:annotation>
+<xs:documentation>
+Test workout result
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="max" use="required" type="xs:integer">
+<xs:annotation>
+<xs:documentation>
+Maximum value.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="avg" use="required" type="xs:integer">
+<xs:annotation>
+<xs:documentation>
+Average value.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:complexType name="exestatdecType">
+<xs:annotation>
+<xs:documentation>
+Test workout result
+</xs:documentation>
+</xs:annotation>
+<xs:attribute name="max" use="required" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>
+Maximum value.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+<xs:attribute name="avg" use="required" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>
+Average value.
+</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:complexType>
+<xs:simpleType name="latitudeType">
+<xs:annotation>
+<xs:documentation>
+The latitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:decimal">
+<xs:minInclusive value="-90.0"/>
+<xs:maxInclusive value="90.0"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="longitudeType">
+<xs:annotation>
+<xs:documentation>
+The longitude of the point.  Decimal degrees, WGS84 datum.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:decimal">
+<xs:minInclusive value="-180.0"/>
+<xs:maxExclusive value="180.0"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="degreesType">
+<xs:annotation>
+<xs:documentation>
+Used for bearing, heading, course.  Units are decimal degrees, true (not magnetic).
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:decimal">
+<xs:minInclusive value="0.0"/>
+<xs:maxExclusive value="360.0"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="fixType">
+<xs:annotation>
+<xs:documentation>
+Type of GPS fix.  none means GPS had no fix.  To signify the fix info is unknown, leave out fixType entirely. pps = military signal used
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:string">
+<xs:enumeration value="none"/>
+<xs:enumeration value="2d"/>
+<xs:enumeration value="3d"/>
+<xs:enumeration value="dgps"/>
+<xs:enumeration value="pps"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="dgpsStationType">
+<xs:annotation>
+<xs:documentation>
+Represents a differential GPS station.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:integer">
+<xs:minInclusive value="0"/>
+<xs:maxInclusive value="1023"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="sharingType">
+<xs:annotation>
+<xs:documentation>
+Sharing data type definition.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:integer">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation> My favorite  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Planned Route  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="2">
+<xs:annotation>
+<xs:documentation> Track log  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="3">
+<xs:annotation>
+<xs:documentation> Training log  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="activityType">
+<xs:annotation>
+<xs:documentation>
+Activity type code definition.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:integer">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation> Cycling  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Running  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="2">
+<xs:annotation>
+<xs:documentation> Walking  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="3">
+<xs:annotation>
+<xs:documentation> Swimming  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="4">
+<xs:annotation>
+<xs:documentation> Others  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="6">
+<xs:annotation>
+<xs:documentation> Thiathlon  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="subactType">
+<xs:annotation>
+<xs:documentation>
+Sub activity type code definition, it should reference to activity type.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:integer">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation> Others  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Road cycling, street running, freestyle, kinds of stell, walking.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="2">
+<xs:annotation>
+<xs:documentation> Mountain biking, trail running, breaststroke, Novice(Australia), race walking  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="3">
+<xs:annotation>
+<xs:documentation> Track cycling, track running, butterfly, 3-9-3(New Zealand)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="4">
+<xs:annotation>
+<xs:documentation> Downhill biking, treadmill running, backstroke, super sprint  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="5">
+<xs:annotation>
+<xs:documentation> Indoor cycling, jogging, , Novice (Europe) </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="6">
+<xs:annotation>
+<xs:documentation>  , , , sprint  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="7">
+<xs:annotation>
+<xs:documentation>  , , , Olympic(Standard course)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="8">
+<xs:annotation>
+<xs:documentation>  , , , ITU-Long Distance (O2)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="9">
+<xs:annotation>
+<xs:documentation>  , , , ITU-Long Distance (O3)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="10">
+<xs:annotation>
+<xs:documentation>  , , , Half (half-ironman)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="11">
+<xs:annotation>
+<xs:documentation>  , , , Full (ironman Triathlon)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="wptclsType">
+<xs:annotation>
+<xs:documentation>
+POI category ID or Route point type code or track point type code. The description order of code is POI, Rout point and track point. if track point has multi-type, you should use "," to seperate them, e.g. 2, 4. The following table is the type code definition.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Code |  POI type                            |  Route Point type                                                                                  |  Track Point type
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1  |  ATM,                                | Start point of route                                                                                |  Turn guidance point
+2  |  Bank,                                 | Destination point of route                                                                     |  Waypoint
+3  |  Bicycle parking                  |  Pause point                                                                                         |
+4  |  Bicycle Rental (Cycle Hire)| Waypoint of route                                                                                |  Peak point of route
+5  |  Bicycle shop                      | Resume point  (after pasue)                                                                    |
+6  |  Bus station                        |                                                                                                             |
+7  |  Camp site                          |                                                                                                            |
+8  |  Cafe                                  | Start interval point of one workout for field training                               |  Valley point of rout
+9  |  College/university              |                                                                                                            |
+10  |  Convenient store                |                                                                                                            |
+11  |  Cyclists Accommodation   |                                                                                                            |
+12  |  Fast food                           | Waypoint of route and start interval point of workout for field training    |
+13  |  Fire station                        |                                                                                                            |
+14  |  Fuel(Gas Station)              |                                                                                                             |
+15  |  Park                                 |                                                                                                             |
+16  |  Hospital                           | End interval point of one workout for field training                                 |
+17  |  Hotel                               |                                                                                                             |
+18  |  Inforamtion centre            |                                                                                                             |
+19  |  Other                               |                                                                                                             |
+20  |  Parking                            | Waypoint of route and end interval point of workout for field training      |
+21  |  Pharmacy                        |                                                                                                             |
+22  |  Police                              |                                                                                                             |
+23  |  Restaurant                       |                                                                                                             |
+24  |  Service for Cyclists          |                                                                                                             |
+25  |  Sport                               |                                                                                                             |
+26  |  Supermarket                    |                                                                                                             |
+27  |  Toilets                             |                                                                                                            |
+28  |  Castle                             |                                                                                                              |
+29  |  Post Office                      |                                                                                                             |
+30  |  Museum                         |                                                                                                              |
+200  |  Uphill                             |                                                                                                             |
+201  |  Downhill                        |                                                                                                             |
+202  |  Peak                               |                                                                                                              |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:string">
+<xs:pattern value="([0-9, ])+"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="rtecodeType">
+<xs:annotation>
+<xs:documentation>
+route code definition
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:integer">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation> location information for pre-plan route, field training route and share route.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Track log (training) - includes track log and sensor log  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="testmodeType">
+<xs:annotation>
+<xs:documentation>
+Test workout mode definition
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:string">
+<xs:enumeration value="mhr">
+<xs:annotation>
+<xs:documentation> Maximum Heart Rate(MHR) in BPM.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="lthr">
+<xs:annotation>
+<xs:documentation> Lactate Threshold Heart Rate(LTHR) in BPM. </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="map">
+<xs:annotation>
+<xs:documentation> Maximum Aerobic Power(MAP) in watt.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="ftp">
+<xs:annotation>
+<xs:documentation> Functional Threshold Power(FTP) in watt.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="genderType">
+<xs:annotation>
+<xs:documentation>
+Gender code
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:nonNegativeInteger">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation> Female  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Male  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="bikeType">
+<xs:annotation>
+<xs:documentation>
+Bike type code
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:nonNegativeInteger">
+<xs:enumeration value="0">
+<xs:annotation>
+<xs:documentation>Other</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation>Race Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="2">
+<xs:annotation>
+<xs:documentation>Mountain Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="3">
+<xs:annotation>
+<xs:documentation>Mini Velo</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="4">
+<xs:annotation>
+<xs:documentation>Folding Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="5">
+<xs:annotation>
+<xs:documentation>Hybrid Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="6">
+<xs:annotation>
+<xs:documentation>City Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="7">
+<xs:annotation>
+<xs:documentation>Touring Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="8">
+<xs:annotation>
+<xs:documentation>Electric Bicycle</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="9">
+<xs:annotation>
+<xs:documentation>Upright Bike</xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="zoneType">
+<xs:annotation>
+<xs:documentation>
+Gender code
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:positiveInteger">
+<xs:enumeration value="1">
+<xs:annotation>
+<xs:documentation> Heart Rate  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="2">
+<xs:annotation>
+<xs:documentation> Pace(for Runner)  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="3">
+<xs:annotation>
+<xs:documentation> Power  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="4">
+<xs:annotation>
+<xs:documentation> MHR Percentage  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="5">
+<xs:annotation>
+<xs:documentation> LTHR Percentage  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="6">
+<xs:annotation>
+<xs:documentation> MP (Maximum Power)  Percentage  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="7">
+<xs:annotation>
+<xs:documentation> MAP (Maximum Aerobic Power) Percentage  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="8">
+<xs:annotation>
+<xs:documentation> FTP (Functional Threshold Power) Percentage  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+<xs:enumeration value="9">
+<xs:annotation>
+<xs:documentation> Training Pace Type. If the training zone type is "Training Pace Type", the high and low zone value should be the Training Pace Type value, and they are the same.  </xs:documentation>
+</xs:annotation>
+</xs:enumeration>
+</xs:restriction>
+</xs:simpleType>
+</xs:schema>

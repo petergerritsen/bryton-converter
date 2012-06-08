@@ -20,7 +20,7 @@ $(document).ready(function () {
                            }, viewmodel);
 
         initialize_map();
-        //initialize_elevationchart();
+        initialize_elevationchart();
     });
 });
 
@@ -38,7 +38,7 @@ function initialize_map() {
     var trackCoordinates = [];
 
     $.each(viewmodel.Points(), function (key, val) {
-        trackCoordinates.push(new google.maps.LatLng(val.Lat, val.Long));
+        trackCoordinates.push(new google.maps.LatLng(val.Lat(), val.Long()));
     });
 
     var trackPath = new google.maps.Polyline({
@@ -51,97 +51,97 @@ function initialize_map() {
     trackPath.setMap(map);
 }
 
-//function initialize_elevationchart() {
-//    var data = [];
+function initialize_elevationchart() {
+    var data = [];
 
-//    $.each(viewmodel.Points(), function (key, val) {
-//        data.push([val.Dist, val.Ele]);
-//    });
+    $.each(viewmodel.Points(), function (key, val) {
+        data.push([val.Dist(), val.Ele()]);
+    });
 
-//    elevationchart = new Highcharts.Chart({
-//        chart: {
-//            renderTo: 'chartcontainer',
-//            zoomType: 'x',
-//            spacingRight: 20
-//        },
-//        title: {
-//            text: 'Elevation'
-//        },
-//        subtitle: {
-//            text: document.ontouchstart === undefined ?
-//				'Click and drag in the plot area to zoom in' :
-//				'Drag your finger over the plot to zoom in'
-//        },
-//        xAxis: {
-//            type: 'linear',
-//            maxZoom: 100,
-//            title: {
-//                text: null
-//            }
-//        },
-//        yAxis: {
-//            title: {
-//                text: 'Elevation'
-//            },
-//            showFirstLabel: false
-//        },
-//        toolTip: {
-//            shared: true
-//        },
-//        legend: {
-//            enabled: false
-//        },
-//        plotOptions: {
-//            series: {
-//                point: {
-//                    events: {
-//                        mouseOver: function () {
-//                            //setPointMarker(this.x);
-//                        },
-//                        click: function () {
-//                            //addMarker(this.x);
-//                        }
-//                    }
-//                },
-//                events: {
-//                    mouseOut: function () {
-//                        //setPointMarker(null);
-//                    }
-//                }
-//            },
-//            area: {
-//                fillColor: {
-//                    linearGradient: [0, 0, 0, 300],
-//                    stops: [
-//						[0, Highcharts.getOptions().colors[0]],
-//						[1, 'rgba(2,0,0,0)']
-//					]
-//                },
-//                lineWidth: 1,
-//                marker: {
-//                    enabled: false,
-//                    states: {
-//                        hover: {
-//                            enabled: true,
-//                            radius: 5
-//                        }
-//                    }
-//                },
-//                shadow: false,
-//                states: {
-//                    hover: {
-//                        lineWidth: 1
-//                    }
-//                }
-//            }
-//        },
-//        series: [{
-//            type: 'area',
-//            name: 'Ele',
-//            data: data
-//        }]
-//    });
-//}
+    elevationchart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'chartcontainer',
+            zoomType: 'x',
+            spacingRight: 20
+        },
+        title: {
+            text: 'Elevation'
+        },
+        subtitle: {
+            text: document.ontouchstart === undefined ?
+				'Click and drag in the plot area to zoom in' :
+				'Drag your finger over the plot to zoom in'
+        },
+        xAxis: {
+            type: 'linear',
+            maxZoom: 100,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Elevation'
+            },
+            showFirstLabel: false
+        },
+        toolTip: {
+            shared: true
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function () {
+                            setPointMarker(this.x);
+                        },
+                        click: function () {
+                            addMarker(this.x);
+                        }
+                    }
+                },
+                events: {
+                    mouseOut: function () {
+                        setPointMarker(null);
+                    }
+                }
+            },
+            area: {
+                fillColor: {
+                    linearGradient: [0, 0, 0, 300],
+                    stops: [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, 'rgba(2,0,0,0)']
+					]
+                },
+                lineWidth: 1,
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            radius: 5
+                        }
+                    }
+                },
+                shadow: false,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'area',
+            name: 'Ele',
+            data: data
+        }]
+    });
+}
 
 //function setPointMarker(dist) {
 //    if (dist === null && pointMarker != null) {

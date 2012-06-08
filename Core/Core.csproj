@@ -53,9 +53,16 @@
     <Compile Include="Model\Route.cs" />
     <Compile Include="Model\TrackPoint.cs" />
     <Compile Include="Model\TrackPointType.cs" />
+    <Compile Include="XML\Parser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="XML\XSD\bryton-bdx.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XML\XSD\TrainingCenterDatabasev2.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
