@@ -21,9 +21,28 @@ $(document).ready(function () {
         }, viewmodel);
 
         viewmodel.markers = ko.observableArray();
-        
+
+        viewmodel.optionValues = ["Valley", "Peak"];
+
+        viewmodel.addMarker = function (marker) {
+            marker.type.subscribe(function (newType) { 
+                marker.mapMarker.setIcon(newType == "Peak" ? "/Content/images/markers/bike_downhill.png" : "/Content/images/markers/bike_rising.png")
+            });
+            viewmodel.markers.push(marker);
+            viewmodel.markers.sort(function (left, right) { return left.x - right.x; });
+        };
+
+        viewmodel.removeMarker = function () {
+            this.mapMarker.setMap(null);
+            elevationchart.xAxis[0].removePlotLine('plot-line' + this.x);
+            viewmodel.markers.remove(this);
+        };
+
+        ko.applyBindings(viewmodel);
+
         initialize_map();
         initialize_elevationchart();
+
     });
 });
 
@@ -170,10 +189,13 @@ function setPointMarker(dist) {
 
 function addMarker(dist) {
     var pos = getPointPosition(dist);
+    var point = getPoint(dist);
 
-    pointMarker = new google.maps.Marker({
+    tmpMarker = new google.maps.Marker({
         position: pos,
-        map: map
+        map: map,
+        animation: google.maps.Animation.DROP,
+        icon: '/Content/images/markers/bike_downhill.png'
     });
 
     elevationchart.xAxis[0].addPlotLine({
@@ -183,9 +205,20 @@ function addMarker(dist) {
         id: 'plot-line' + dist
     });
 
-    var marker = { mapMarker: pointMarker, x: dist };
+    var marker = { 
+        mapMarker: tmpMarker,
+        x: dist,
+        distance: (dist / 1000).toFixed(2),
+        elevation: point.Ele(),
+        type: ko.observable("Peak")
+    };
 
-    viewmodel.markers.push(marker);
+    viewmodel.addMarker(marker);
+}
+
+function getPoint(dist){
+    var x = $.inArray(dist, pointDistances);
+    return viewmodel.Points()[x];
 }
 
 function getPointPosition(dist) {

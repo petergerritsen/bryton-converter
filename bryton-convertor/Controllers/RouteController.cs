@@ -23,7 +23,7 @@ namespace Web.Controllers
             return View();
         }
 
-        public ActionResult Edit(HttpPostedFileBase file)
+        public ActionResult Upload(HttpPostedFileBase file)
         {
             if (file == null) {
                 return RedirectToAction("Index");
@@ -31,19 +31,29 @@ namespace Web.Controllers
 
             if (file.ContentLength > 0)
             {
-                var model = new Models.EditRouteViewModel();
-                
                 var route = Core.XML.Parser.ParseTcx(file.InputStream);
 
-                model.RouteId = route.Id;
-                model.RouteName = route.Name;
-
-                return View(model);
+                return RedirectToAction("Edit", new { routeId = route.Id });
             }
             else
             {
                 return RedirectToAction("Index");
             }
+        }
+
+        public ActionResult Edit(int routeId) {
+            var model = new Models.EditRouteViewModel();
+
+            var context = new Context();
+
+            var route = context.Routes.FirstOrDefault(x => x.Id == routeId);
+            if (route == null)
+                return new HttpStatusCodeResult(404);
+
+            model.RouteId = route.Id;
+            model.RouteName = route.Name;
+
+            return View(model);
         }
 
         public ActionResult TrackPoints(int routeId)

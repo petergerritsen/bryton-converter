@@ -13,7 +13,14 @@
 
 <div id="main">
     <div id="right">
-        Controls section
+        <h4>Valley-/peakpoints</h4>
+        <ul id="vplist" data-bind="foreach: markers">
+            <li>
+                <select data-bind="options: $parent.optionValues, value: type"></select>
+                <span data-bind="text: elevation"></span> m high at <span data-bind="text: distance"></span> km
+                <a href="#" data-bind="click: $parent.removeMarker">X</a>
+            </li>
+        </ul>
     </div>
     <div id="left">
         <div id="map_canvas"></div>

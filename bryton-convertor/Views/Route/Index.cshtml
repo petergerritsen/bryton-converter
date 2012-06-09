@@ -4,7 +4,7 @@
 
 <h2>Upload your route</h2>
 
-@using (Html.BeginForm("Edit", "Route", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Upload", "Route", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <label for="file">TCX-file:</label>
     <input type="file" name="file" />
