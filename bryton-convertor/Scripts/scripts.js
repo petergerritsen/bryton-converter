@@ -2,6 +2,7 @@
 var elevationchart;
 var pointMarker = null;
 var viewmodel = {};
+var pointDistances = [];
 
 $(document).ready(function () {
     var routeId = $("input[name='RouteId']").val();
@@ -9,16 +10,18 @@ $(document).ready(function () {
     $.getJSON("/Route/TrackPoints?routeId=" + routeId, function (data) {
         viewmodel = ko.mapping.fromJS(data);
         viewmodel.bounds = ko.computed(function () {
-                                return new google.maps.LatLngBounds(
+            return new google.maps.LatLngBounds(
                                     new google.maps.LatLng(this.MinLat(), this.MinLong()),
                                     new google.maps.LatLng(this.MaxLat(), this.MaxLong())
                                 );
-                           }, viewmodel);
+        }, viewmodel);
 
         viewmodel.center = ko.computed(function () {
-                                return new google.maps.LatLng((this.MaxLat() + this.MinLat()) / 2, (this.MaxLong() + this.MinLong()) / 2);
-                           }, viewmodel);
+            return new google.maps.LatLng((this.MaxLat() + this.MinLat()) / 2, (this.MaxLong() + this.MinLong()) / 2);
+        }, viewmodel);
 
+        viewmodel.markers = ko.observableArray();
+        
         initialize_map();
         initialize_elevationchart();
     });
@@ -52,10 +55,11 @@ function initialize_map() {
 }
 
 function initialize_elevationchart() {
-    var data = [];
+    var heightdata = [];
 
     $.each(viewmodel.Points(), function (key, val) {
-        data.push([val.Dist(), val.Ele()]);
+        heightdata.push([val.Dist(), val.Ele()]);
+        pointDistances.push(val.Dist());
     });
 
     elevationchart = new Highcharts.Chart({
@@ -85,7 +89,11 @@ function initialize_elevationchart() {
             },
             showFirstLabel: false
         },
-        toolTip: {
+        tooltip: {
+            formatter: function () {
+                return '<b>Distance:</b> ' + (this.points[0].x / 1000).toFixed(2) +
+                    'km<br/><b>Elevation:</b> ' + this.points[0].y + 'm';
+            },
             shared: true
         },
         legend: {
@@ -138,51 +146,52 @@ function initialize_elevationchart() {
         series: [{
             type: 'area',
             name: 'Ele',
-            data: data
+            data: heightdata
         }]
     });
 }
 
-//function setPointMarker(dist) {
-//    if (dist === null && pointMarker != null) {
-//        pointMarker.setVisible(false);
-//    }
-//    else {
-//        var pos = getPointPosition(dist);
-//        if (pointMarker === null) {
-//            pointMarker = new google.maps.Marker({
-//                position: pos,
-//                map: map
-//            });
-//        }
-//        pointMarker.setPosition(pos);
-//        pointMarker.setVisible(true);
-//    }
-//}
+function setPointMarker(dist) {
+    if (dist === null && pointMarker != null) {
+        pointMarker.setVisible(false);
+    }
+    else {
+        var pos = getPointPosition(dist);
+        if (pointMarker === null) {
+            pointMarker = new google.maps.Marker({
+                position: pos,
+                map: map
+            });
+        }
+        pointMarker.setPosition(pos);
+        pointMarker.setVisible(true);
+    }
+}
 
-//function addMarker(dist) {
-//    var pos = getPointPosition(dist);
+function addMarker(dist) {
+    var pos = getPointPosition(dist);
 
-//    pointMarker = new google.maps.Marker({
-//        position: pos,
-//        map: map
-//    });
+    pointMarker = new google.maps.Marker({
+        position: pos,
+        map: map
+    });
 
-//    markers.push(pointMarker);
+    elevationchart.xAxis[0].addPlotLine({
+        value: dist,
+        color: 'red',
+        width: 1,
+        id: 'plot-line' + dist
+    });
 
-//    elevationchart.xAxis[0].addPlotLine({
-//        value: dist,
-//        color: 'red',
-//        width: 1,
-//        id: 'plot-line' + dist
-//    });
+    var marker = { mapMarker: pointMarker, x: dist };
 
-//}
+    viewmodel.markers.push(marker);
+}
 
-//function getPointPosition(dist) {
-//    var x = $.inArray(dist, pointDistances);
-//    var point = points[x];
-//    if (point === undefined)
-//        return;
-//    return new google.maps.LatLng(point.Lat, point.Long);
-//}
+function getPointPosition(dist) {
+    var x = $.inArray(dist, pointDistances);
+    var point = viewmodel.Points()[x];
+    if (point === undefined)
+        return;
+    return new google.maps.LatLng(point.Lat(), point.Long());
+}
