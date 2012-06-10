@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Entity.cs" />
+    <Compile Include="Model\Json.cs" />
     <Compile Include="Persistence\Context.cs" />
     <Compile Include="Persistence\Configuration.cs" />
     <Compile Include="Model\CoursePoint.cs" />

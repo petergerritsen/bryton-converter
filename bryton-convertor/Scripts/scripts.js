@@ -7,6 +7,16 @@ var pointDistances = [];
 $(document).ready(function () {
     var routeId = $("input[name='RouteId']").val();
 
+    $("#btnSave").click(function () {
+        var data = { routeId: viewmodel.Id(), name: viewmodel.Name(), markers: [] };
+        
+        $.each(viewmodel.markers(), function (key, val) { 
+            data.markers.push( { pointId: val.id, pointType: val.type() });
+        });
+
+        $("#downloadmodelinput").val(JSON.stringify(data));        
+    });
+
     $.getJSON("/Route/TrackPoints?routeId=" + routeId, function (data) {
         viewmodel = ko.mapping.fromJS(data);
         viewmodel.bounds = ko.computed(function () {
@@ -25,7 +35,7 @@ $(document).ready(function () {
         viewmodel.optionValues = ["Valley", "Peak"];
 
         viewmodel.addMarker = function (marker) {
-            marker.type.subscribe(function (newType) { 
+            marker.type.subscribe(function (newType) {
                 marker.mapMarker.setIcon(newType == "Peak" ? "/Content/images/markers/bike_downhill.png" : "/Content/images/markers/bike_rising.png")
             });
             viewmodel.markers.push(marker);
@@ -175,7 +185,8 @@ function setPointMarker(dist) {
         pointMarker.setVisible(false);
     }
     else {
-        var pos = getPointPosition(dist);
+        var point = getPoint(dist);
+        var pos = new google.maps.LatLng(point.Lat(), point.Long());
         if (pointMarker === null) {
             pointMarker = new google.maps.Marker({
                 position: pos,
@@ -187,12 +198,11 @@ function setPointMarker(dist) {
     }
 }
 
-function addMarker(dist) {
-    var pos = getPointPosition(dist);
+function addMarker(dist) {    
     var point = getPoint(dist);
 
     tmpMarker = new google.maps.Marker({
-        position: pos,
+        position: new google.maps.LatLng(point.Lat(), point.Long()),
         map: map,
         animation: google.maps.Animation.DROP,
         icon: '/Content/images/markers/bike_downhill.png'
@@ -205,8 +215,9 @@ function addMarker(dist) {
         id: 'plot-line' + dist
     });
 
-    var marker = { 
+    var marker = {
         mapMarker: tmpMarker,
+        id: point.Id(),
         x: dist,
         distance: (dist / 1000).toFixed(2),
         elevation: point.Ele(),
@@ -219,12 +230,4 @@ function addMarker(dist) {
 function getPoint(dist){
     var x = $.inArray(dist, pointDistances);
     return viewmodel.Points()[x];
-}
-
-function getPointPosition(dist) {
-    var x = $.inArray(dist, pointDistances);
-    var point = viewmodel.Points()[x];
-    if (point === undefined)
-        return;
-    return new google.maps.LatLng(point.Lat(), point.Long());
 }

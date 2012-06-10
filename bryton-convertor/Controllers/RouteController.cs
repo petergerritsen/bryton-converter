@@ -10,6 +10,8 @@ using System.Globalization;
 using Core.Persistence;
 using Core.Model;
 using System.Xml;
+using System.Text;
+using System.Web.Script.Serialization;
 
 namespace Web.Controllers
 {
@@ -67,6 +69,7 @@ namespace Web.Controllers
             var data = new
             {
                 Id = routeId,
+                Name = route.Name,
                 MaxLong = route.TrackPoints.Max(x => x.Longitude),
                 MinLong = route.TrackPoints.Min(x => x.Longitude),
                 MaxLat = route.TrackPoints.Max(x => x.Latitude),
@@ -84,5 +87,22 @@ namespace Web.Controllers
 
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+        
+        public ActionResult Download(string model) {
+            var ser = new JavaScriptSerializer();
+            var newModel = ser.Deserialize<JsonViewModel>(model);
+            
+            var context = new Context();
+
+            var route = context.Routes.FirstOrDefault(x => x.Id == newModel.routeId);
+            if (route == null)
+                return new HttpStatusCodeResult(404);
+
+            route.Name = newModel.name;
+
+            var doc = route.GetBdx(newModel.markers);                  
+            
+            return File(Encoding.UTF8.GetBytes(doc.ToString()), "text/xml", "route.bdx");                       
+        }        
     }
 }
