@@ -12,10 +12,11 @@ using Core.Model;
 using System.Xml;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Threading;
 
 namespace Web.Controllers
 {
-    public class RouteController : Controller
+    public class RouteController : AsyncController
     {
         //
         // GET: /Route/
@@ -25,21 +26,40 @@ namespace Web.Controllers
             return View();
         }
 
-        public ActionResult Upload(HttpPostedFileBase file)
+        [AsyncTimeout(300000)]
+        public void UploadAsync(HttpPostedFileBase file)
         {
             if (file == null) {
-                return RedirectToAction("Index");
+                AsyncManager.Parameters["ModelIsValid"] = false;
             }
 
             if (file.ContentLength > 0)
             {
-                var route = Core.XML.Parser.ParseTcx(file.InputStream);
+                
 
-                return RedirectToAction("Edit", new { routeId = route.Id });
+                AsyncManager.OutstandingOperations.Increment();
+                new Thread(() =>
+                {
+                    var route = Core.XML.Parser.ParseTcx(file.InputStream);
+
+                    AsyncManager.Parameters["ModelIsValid"] = true;
+                    AsyncManager.Parameters["RouteId"] = route.Id;
+                    AsyncManager.OutstandingOperations.Decrement();
+                }).Start();
             }
             else
             {
+                AsyncManager.Parameters["ModelIsValid"] = false; 
+            }
+        }
+
+        public ActionResult UploadCompleted(HttpPostedFileBase file) {
+            if ((bool)AsyncManager.Parameters["ModelIsValid"] == false)
+            {
                 return RedirectToAction("Index");
+            }
+            else {
+                return RedirectToAction("Edit", new { routeId = (int)AsyncManager.Parameters["RouteId"] });
             }
         }
 
